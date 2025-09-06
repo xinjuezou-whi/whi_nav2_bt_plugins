@@ -22,20 +22,20 @@ Changelog:
 namespace whi_nav2_bt_plugins
 {
 
-	PoseRegistration::PoseRegistration(const std::string& XmlTagName, const std::string& ActionName,
+	PoseRegistrationAction::PoseRegistrationAction(const std::string& XmlTagName, const std::string& ActionName,
 			const BT::NodeConfiguration& Conf)
 		: nav2_behavior_tree::BtActionNode<whi_interfaces::action::PoseRegistration>(XmlTagName, ActionName, Conf)
 	{
 		config().blackboard->set("pose_updated", false);
 	}
 
-	void PoseRegistration::on_tick()
+	void PoseRegistrationAction::on_tick()
 	{
 		getInput("pose", goal_.target_pose);
 		getInput("controller_id", goal_.controller_id);
 	}
 
-	void PoseRegistration::on_wait_for_result()
+	void PoseRegistrationAction::on_wait_for_result()
 	{
 		// Check if the goal has been updated
 		if (config().blackboard->get<bool>("pose_updated"))
@@ -58,10 +58,10 @@ BT_REGISTER_NODES(factory)
 	BT::NodeBuilder builder =
 		[](const std::string& Name, const BT::NodeConfiguration& Config)
 	{
-		return std::make_unique<whi_nav2_bt_plugins::PoseRegistration>(
+		return std::make_unique<whi_nav2_bt_plugins::PoseRegistrationAction>(
 			Name, "pose_registration", Config);
 	};
 
-	factory.registerBuilder<whi_nav2_bt_plugins::PoseRegistration>(
-		"PoseRegistration", builder);
+	factory.registerBuilder<whi_nav2_bt_plugins::PoseRegistrationAction>(
+		"PoseRegistration", builder); // name of bt action
 }

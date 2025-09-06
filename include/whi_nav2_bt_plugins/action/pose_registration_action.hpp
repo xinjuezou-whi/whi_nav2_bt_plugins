@@ -24,10 +24,10 @@ Changelog:
 namespace whi_nav2_bt_plugins
 {
 
-	class PoseRegistration : public nav2_behavior_tree::BtActionNode<whi_interfaces::action::PoseRegistration>
+	class PoseRegistrationAction : public nav2_behavior_tree::BtActionNode<whi_interfaces::action::PoseRegistration>
 	{
 	public:
-		PoseRegistration(const std::string& XmlTagName, const std::string& ActionName,
+		PoseRegistrationAction(const std::string& XmlTagName, const std::string& ActionName,
 			const BT::NodeConfiguration& Conf);
 
 		void on_tick() override;
