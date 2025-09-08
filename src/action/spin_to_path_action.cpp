@@ -18,45 +18,50 @@ All text above must be included in any redistribution.
 
 namespace whi_nav2_bt_plugins
 {
-	// PoseRegistration::PoseRegistration(const std::string& XmlTagName, const std::string& ActionName,
-	// 		const BT::NodeConfiguration& Conf)
-	// 	: nav2_behavior_tree::BtActionNode<whi_interfaces::action::PoseRegistration>(XmlTagName, ActionName, Conf)
-	// {
-	// 	config().blackboard->set("pose_updated", false);
-	// }
+	SpinToPathAction::SpinToPathAction(const std::string& XmlTagName, const std::string& ActionName,
+			const BT::NodeConfiguration& Conf)
+		: nav2_behavior_tree::BtActionNode<whi_interfaces::action::SpinToPath>(XmlTagName, ActionName, Conf)
+	{
+		/// node version and copyright announcement
+		std::cout << "\nWHI spin to path bt node VERSION 00.01.2" << std::endl;
+		std::cout << "Copyright © 2025-2026 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
 
-	// void PoseRegistration::on_tick()
-	// {
-	// 	getInput("pose", goal_.target_pose);
-	// 	getInput("controller_id", goal_.controller_id);
-	// }
+		config().blackboard->set("path_updated", false);
+	}
 
-	// void PoseRegistration::on_wait_for_result()
-	// {
-	// 	// Check if the goal has been updated
-	// 	if (config().blackboard->get<bool>("pose_updated"))
-	// 	{
-	// 		// Reset the flag in the blackboard
-	// 		config().blackboard->set("pose_updated", false);
+	void SpinToPathAction::on_tick()
+	{
+		getInput("path", goal_.path);
+		getInput("lookahead_distance", goal_.lookahead_distance);
+		getInput("controller_id", goal_.controller_id);
+	}
 
-	// 		// Grab the new goal and set the flag so that we send the new goal to
-	// 		// the action server on the next loop iteration
-	// 		getInput("pose", goal_.target_pose);
-	// 		goal_updated_ = true;
-	// 	}
-	// }
+	void SpinToPathAction::on_wait_for_result()
+	{
+		// Check if the goal has been updated
+		if (config().blackboard->get<bool>("path_updated"))
+		{
+			// Reset the flag in the blackboard
+			config().blackboard->set("path_updated", false);
+
+			// Grab the new goal and set the flag so that we send the new goal to
+			// the action server on the next loop iteration
+			getInput("path", goal_.path);
+			goal_updated_ = true;
+		}
+	}
 } // namespace whi_nav2_bt_plugins
 
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
-	// BT::NodeBuilder builder =
-	// 	[](const std::string& Name, const BT::NodeConfiguration& Config)
-	// {
-	// 	return std::make_unique<whi_nav2_bt_plugins::PoseRegistration>(
-	// 		Name, "pose_registration", Config);
-	// };
+	BT::NodeBuilder builder =
+		[](const std::string& Name, const BT::NodeConfiguration& Config)
+	{
+		return std::make_unique<whi_nav2_bt_plugins::SpinToPathAction>(
+			Name, "spin_to_path", Config);
+	};
 
-	// factory.registerBuilder<whi_nav2_bt_plugins::PoseRegistration>(
-	// 	"PoseRegistration", builder);
+	factory.registerBuilder<whi_nav2_bt_plugins::SpinToPathAction>(
+		"SpinToPath", builder); // name of bt action
 }

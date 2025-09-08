@@ -15,7 +15,7 @@ Changelog:
 2025-xx-xx: xxx
 ******************************************************************/
 #pragma once
-// #include "whi_interfaces/action/pose_registration.hpp"
+#include "whi_interfaces/action/spin_to_path.hpp"
 
 #include <nav2_behavior_tree/bt_action_node.hpp>
 
@@ -23,23 +23,24 @@ Changelog:
 
 namespace whi_nav2_bt_plugins
 {
-	// class PoseRegistration : public nav2_behavior_tree::BtActionNode<whi_interfaces::action::PoseRegistration>
-	// {
-	// public:
-	// 	PoseRegistration(const std::string& XmlTagName, const std::string& ActionName,
-	// 		const BT::NodeConfiguration& Conf);
+	class SpinToPathAction : public nav2_behavior_tree::BtActionNode<whi_interfaces::action::SpinToPath>
+	{
+	public:
+		SpinToPathAction(const std::string& XmlTagName, const std::string& ActionName,
+			const BT::NodeConfiguration& Conf);
 
-	// 	void on_tick() override;
+		void on_tick() override;
 
-	// 	void on_wait_for_result() override;
+		void on_wait_for_result() override;
 
-	// 	static BT::PortsList providedPorts()
-	// 	{
-	// 		return providedBasicPorts(
-	// 			{
-	// 				BT::InputPort<geometry_msgs::msg::PoseStamped>("pose", "Pose to registrate"),
-	// 				BT::InputPort<std::string>("controller_id", ""),
-	// 			});
-	// 	}
-	// };
+		static BT::PortsList providedPorts()
+		{
+			return providedBasicPorts(
+				{
+					BT::InputPort<std::string>("controller_id", ""),
+					BT::InputPort<nav_msgs::msg::Path>("path", "Planned path"),
+					BT::InputPort<double>("lookahead_distance", 0.5, "lookahead distance")
+				});
+		}
+	};
 } // namespace whi_nav2_bt_plugins

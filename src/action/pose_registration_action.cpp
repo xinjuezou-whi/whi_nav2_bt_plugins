@@ -26,13 +26,17 @@ namespace whi_nav2_bt_plugins
 			const BT::NodeConfiguration& Conf)
 		: nav2_behavior_tree::BtActionNode<whi_interfaces::action::PoseRegistration>(XmlTagName, ActionName, Conf)
 	{
+		/// node version and copyright announcement
+		std::cout << "\nWHI pose registration bt node VERSION 00.01.2" << std::endl;
+		std::cout << "Copyright © 2025-2026 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
+
 		config().blackboard->set("pose_updated", false);
 	}
 
 	void PoseRegistrationAction::on_tick()
 	{
-		getInput("pose", goal_.target_pose);
 		getInput("controller_id", goal_.controller_id);
+		getInput("pose", goal_.target_pose);
 	}
 
 	void PoseRegistrationAction::on_wait_for_result()

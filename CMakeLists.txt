@@ -45,8 +45,8 @@ set(dependencies
 add_library(whi_nav2_pose_registration_action_bt_node SHARED src/action/pose_registration_action.cpp)
 list(APPEND plugin_libs whi_nav2_pose_registration_action_bt_node)
 
-# add_library(nav2_back_up_action_bt_node SHARED plugins/action/back_up_action.cpp)
-# list(APPEND plugin_libs nav2_back_up_action_bt_node)
+add_library(whi_nav2_spin_to_path_action_bt_node SHARED src/action/spin_to_path_action.cpp)
+list(APPEND plugin_libs whi_nav2_spin_to_path_action_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

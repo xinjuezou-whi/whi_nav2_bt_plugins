@@ -38,8 +38,8 @@ namespace whi_nav2_bt_plugins
 		{
 			return providedBasicPorts(
 				{
-					BT::InputPort<geometry_msgs::msg::PoseStamped>("pose", "Pose to registrate"),
 					BT::InputPort<std::string>("controller_id", ""),
+					BT::InputPort<geometry_msgs::msg::PoseStamped>("pose", "Pose to registrate")
 				});
 		}
 	};
