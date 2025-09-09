@@ -37,7 +37,7 @@ namespace whi_nav2_bt_plugins
 		{
 			return providedBasicPorts(
 				{
-					BT::InputPort<std::string>("controller_id", ""),
+					BT::InputPort<std::string>("action_id", ""),
 					BT::InputPort<nav_msgs::msg::Path>("path", "Planned path"),
 					BT::InputPort<double>("lookahead_distance", 0.5, "lookahead distance")
 				});
