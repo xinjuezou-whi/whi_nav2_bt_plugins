@@ -59,7 +59,7 @@ BT_REGISTER_NODES(factory)
 		[](const std::string& Name, const BT::NodeConfiguration& Config)
 	{
 		return std::make_unique<whi_nav2_bt_plugins::SpinToPathAction>(
-			Name, "spin_to_path", Config);
+			Name, "SpinToPath", Config); // action name
 	};
 
 	factory.registerBuilder<whi_nav2_bt_plugins::SpinToPathAction>(
