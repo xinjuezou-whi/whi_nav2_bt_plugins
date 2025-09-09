@@ -13,7 +13,7 @@
     </Action>
 
     <Action ID="SpinToPath">
-      <input_port name="controller_id" default="PoseRegistration"/>
+      <input_port name="action_id" default="SpinToPath"/>
       <input_port name="path">Planned path</input_port>
       <input_port name="lookahead_distance">Lookahead distance</input_port>
     </Action>
