@@ -25,22 +25,33 @@ namespace whi_nav2_bt_plugins
 {
 	class SpinToPathAction : public nav2_behavior_tree::BtActionNode<whi_interfaces::action::SpinToPath>
 	{
+		using Action = whi_interfaces::action::SpinToPath;
+		using ActionResult = Action::Result;
+
 	public:
 		SpinToPathAction(const std::string& XmlTagName, const std::string& ActionName,
 			const BT::NodeConfiguration& Conf);
 
 		void on_tick() override;
 
-		void on_wait_for_result() override;
+		void on_timeout() override;
+
+  		BT::NodeStatus on_success() override;
+
+  		BT::NodeStatus on_aborted() override;
+
+  		BT::NodeStatus on_cancelled() override;
 
 		static BT::PortsList providedPorts()
 		{
 			return providedBasicPorts(
 				{
-					BT::InputPort<std::string>("action_id", ""),
 					BT::InputPort<nav_msgs::msg::Path>("path", "Planned path"),
-					BT::InputPort<double>("lookahead_distance", 0.5, "lookahead distance")
-				});
+					BT::InputPort<double>("lookahead_distance", 0.5, "lookahead distance"),
+        			BT::OutputPort<ActionResult::_error_code_type>("error_code_id",
+						"The spin behavior error code"),
+					BT::OutputPort<std::string>("error_msg", "The spin behavior error msg"),
+			});
 		}
 	};
 } // namespace whi_nav2_bt_plugins

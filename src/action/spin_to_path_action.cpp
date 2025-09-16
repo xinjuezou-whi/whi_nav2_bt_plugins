@@ -25,34 +25,43 @@ namespace whi_nav2_bt_plugins
 		/// node version and copyright announcement
 		std::cout << "\nWHI spin to path bt node VERSION 00.01.3" << std::endl;
 		std::cout << "Copyright © 2025-2026 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
-
-		config().blackboard->set("path_updated", false);
 	}
 
 	void SpinToPathAction::on_tick()
 	{
 		getInput("path", goal_.path);
 		getInput("lookahead_distance", goal_.lookahead_distance);
-		getInput("action_id", goal_.action_id);
 	}
 
-	void SpinToPathAction::on_wait_for_result()
+	void SpinToPathAction::on_timeout()
 	{
-		// Check if the goal has been updated
-		if (config().blackboard->get<bool>("path_updated"))
-		{
-			// Reset the flag in the blackboard
-			config().blackboard->set("path_updated", false);
+		setOutput("error_code_id", ActionResult::TIMEOUT);
+		setOutput("error_msg", "Behavior Tree action client timed out waiting.");
+	}
 
-			// Grab the new goal and set the flag so that we send the new goal to
-			// the action server on the next loop iteration
-			getInput("path", goal_.path);
-			goal_updated_ = true;
-		}
+	BT::NodeStatus SpinToPathAction::on_success()
+	{
+		setOutput("error_code_id", ActionResult::NONE);
+		setOutput("error_msg", "");
+		return BT::NodeStatus::SUCCESS;
+	}
+
+	BT::NodeStatus SpinToPathAction::on_aborted()
+	{
+		setOutput("error_code_id", result_.result->error_code);
+		setOutput("error_msg", result_.result->error_msg);
+		return BT::NodeStatus::FAILURE;
+	}
+
+	BT::NodeStatus SpinToPathAction::on_cancelled()
+	{
+		setOutput("error_code_id", ActionResult::NONE);
+		setOutput("error_msg", "");
+		return BT::NodeStatus::SUCCESS;
 	}
 } // namespace whi_nav2_bt_plugins
 
-#include "behaviortree_cpp_v3/bt_factory.h"
+#include "behaviortree_cpp/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
 	BT::NodeBuilder builder =

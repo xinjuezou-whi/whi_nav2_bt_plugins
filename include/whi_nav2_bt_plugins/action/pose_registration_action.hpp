@@ -23,22 +23,29 @@ Changelog:
 
 namespace whi_nav2_bt_plugins
 {
-
 	class PoseRegistrationAction : public nav2_behavior_tree::BtActionNode<whi_interfaces::action::PoseRegistration>
 	{
+		using Action = whi_interfaces::action::PoseRegistration;
+		using ActionResult = Action::Result;
+
 	public:
 		PoseRegistrationAction(const std::string& XmlTagName, const std::string& ActionName,
 			const BT::NodeConfiguration& Conf);
 
 		void on_tick() override;
 
-		void on_wait_for_result() override;
+		void on_timeout() override;
+
+  		BT::NodeStatus on_success() override;
+
+  		BT::NodeStatus on_aborted() override;
+
+  		BT::NodeStatus on_cancelled() override;
 
 		static BT::PortsList providedPorts()
 		{
 			return providedBasicPorts(
 				{
-					BT::InputPort<std::string>("controller_id", ""),
 					BT::InputPort<geometry_msgs::msg::PoseStamped>("pose", "Pose to registrate")
 				});
 		}
