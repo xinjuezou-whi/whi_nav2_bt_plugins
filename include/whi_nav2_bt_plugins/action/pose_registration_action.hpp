@@ -34,8 +34,6 @@ namespace whi_nav2_bt_plugins
 
 		void on_tick() override;
 
-		void on_timeout() override;
-
   		BT::NodeStatus on_success() override;
 
   		BT::NodeStatus on_aborted() override;

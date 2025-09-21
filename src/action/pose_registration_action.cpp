@@ -36,12 +36,6 @@ namespace whi_nav2_bt_plugins
 		getInput("pose", goal_.target_pose);
 	}
 
-	void PoseRegistrationAction::on_timeout()
-	{
-		// setOutput("error_code_id", ActionResult::TIMEOUT);
-		// setOutput("error_msg", "Behavior Tree action client timed out waiting.");
-	}
-
 	BT::NodeStatus PoseRegistrationAction::on_success()
 	{
 		// setOutput("error_code_id", ActionResult::NONE);
@@ -64,7 +58,7 @@ namespace whi_nav2_bt_plugins
 	}
 } // namespace whi_nav2_bt_plugins
 
-#include "behaviortree_cpp/bt_factory.h"
+#include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
 	BT::NodeBuilder builder =
