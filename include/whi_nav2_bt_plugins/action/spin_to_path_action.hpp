@@ -34,21 +34,12 @@ namespace whi_nav2_bt_plugins
 
 		void on_tick() override;
 
-  		BT::NodeStatus on_success() override;
-
-  		BT::NodeStatus on_aborted() override;
-
-  		BT::NodeStatus on_cancelled() override;
-
 		static BT::PortsList providedPorts()
 		{
 			return providedBasicPorts(
 				{
 					BT::InputPort<nav_msgs::msg::Path>("path", "Planned path"),
 					BT::InputPort<double>("lookahead_distance", 0.5, "lookahead distance"),
-        			BT::OutputPort<ActionResult::_error_code_type>("error_code_id",
-						"The spin behavior error code"),
-					BT::OutputPort<std::string>("error_msg", "The spin behavior error msg"),
 			});
 		}
 	};

@@ -13,9 +13,10 @@
     </Action>
 
     <Action ID="SpinToPath">
-      <input_port name="action_id" default="SpinToPath"/>
       <input_port name="path">Planned path</input_port>
       <input_port name="lookahead_distance">Lookahead distance</input_port>
+      <input_port name="server_name">Server name</input_port>
+      <input_port name="server_timeout">Server timeout</input_port>
     </Action>
 
     <!-- ############################### CONDITION NODES ############################## -->
