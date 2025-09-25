@@ -32,18 +32,18 @@ namespace whi_nav2_bt_plugins
 		PoseRegistrationAction(const std::string& XmlTagName, const std::string& ActionName,
 			const BT::NodeConfiguration& Conf);
 
+		// Function to perform some user-defined operation on tick
 		void on_tick() override;
 
-  		BT::NodeStatus on_success() override;
-
-  		BT::NodeStatus on_aborted() override;
-
-  		BT::NodeStatus on_cancelled() override;
+		// Function to perform some user-defined operation after a timeout
+		// waiting for a result that hasn't been received yet
+		void on_wait_for_result(std::shared_ptr<const Action::Feedback> Feedback) override;
 
 		static BT::PortsList providedPorts()
 		{
 			return providedBasicPorts(
 				{
+					BT::InputPort<std::string>("controller_id", ""),
 					BT::InputPort<geometry_msgs::msg::PoseStamped>("pose", "Pose to registrate")
 				});
 		}

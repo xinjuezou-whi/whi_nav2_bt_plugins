@@ -27,34 +27,19 @@ namespace whi_nav2_bt_plugins
 		: nav2_behavior_tree::BtActionNode<whi_interfaces::action::PoseRegistration>(XmlTagName, ActionName, Conf)
 	{
 		/// node version and copyright announcement
-		std::cout << "\nWHI pose registration bt node VERSION 00.01.2" << std::endl;
+		std::cout << "\nWHI pose registration bt node VERSION 00.01.3" << std::endl;
 		std::cout << "Copyright © 2025-2026 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
 	}
 
 	void PoseRegistrationAction::on_tick()
 	{
 		getInput("pose", goal_.target_pose);
+		getInput("controller_id", goal_.controller_id);
 	}
 
-	BT::NodeStatus PoseRegistrationAction::on_success()
+	void PoseRegistrationAction::on_wait_for_result(std::shared_ptr<const Action::Feedback> /*Feedback*/)
 	{
-		// setOutput("error_code_id", ActionResult::NONE);
-		// setOutput("error_msg", "");
-		return BT::NodeStatus::SUCCESS;
-	}
-
-	BT::NodeStatus PoseRegistrationAction::on_aborted()
-	{
-		// setOutput("error_code_id", result_.result->error_code);
-		// setOutput("error_msg", result_.result->error_msg);
-		return BT::NodeStatus::FAILURE;
-	}
-
-	BT::NodeStatus PoseRegistrationAction::on_cancelled()
-	{
-		// setOutput("error_code_id", ActionResult::NONE);
-		// setOutput("error_msg", "");
-		return BT::NodeStatus::SUCCESS;
+		// TODO
 	}
 } // namespace whi_nav2_bt_plugins
 
