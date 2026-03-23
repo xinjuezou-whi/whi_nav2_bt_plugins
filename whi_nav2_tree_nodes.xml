@@ -27,6 +27,12 @@
       <output_port name="output_path">Paths concatenated</output_port>
     </Action>
 
+    <Action ID="Trigger">
+      <input_port name="trigger_topic">Topic of trigger</input_port>
+      <input_port name="trigger_type">Type of trigger: empty or bool</input_port>
+      <input_port name="trigger_value">Bool value to publish to trigger_topic</input_port>
+    </Action>
+
     <!-- ############################### CONDITION NODES ############################## -->
 
 
