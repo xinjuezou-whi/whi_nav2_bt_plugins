@@ -33,8 +33,20 @@
       <input_port name="trigger_value">Bool value to publish to trigger_topic</input_port>
     </Action>
 
-    <!-- ############################### CONDITION NODES ############################## -->
+    <Action ID="FollowObjectExt">
+      <input_port name="pose_topic">Topic to publish the pose of the object to follow</input_port>
+      <input_port name="tracked_frame">Target frame to follow (Optional, used if pose_topic is not set)</input_port>
+      <input_port name="max_duration">The maximum duration to follow the object (Optional)</input_port>
+      <input_port name="continuous">Following continously changing target or fixed one</input_port>
+    </Action>
 
+    <Action ID="CancelFollowObjectExt"/>
+
+    <!-- ############################### CONDITION NODES ############################## -->
+    <Condition ID="IsRobotIdle">
+        <input_port name="state_topic">State topic</input_port>
+        <input_port name="device_ids">Array of device ids</input_port>
+    </Condition>
 
     <!-- ############################### CONTROL NODES ################################ -->
 

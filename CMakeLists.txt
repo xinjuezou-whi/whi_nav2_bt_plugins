@@ -44,6 +44,7 @@ set(dependencies
   whi_interfaces
 )
 
+# action
 add_library(whi_nav2_pose_registration_action_bt_node SHARED src/action/pose_registration_action.cpp)
 list(APPEND plugin_libs whi_nav2_pose_registration_action_bt_node)
 
@@ -53,8 +54,18 @@ list(APPEND plugin_libs whi_nav2_spin_to_path_action_bt_node)
 add_library(whi_nav2_concatenate_paths_with_arc_action_bt_node SHARED src/action/concatenate_paths_with_arc_action.cpp)
 list(APPEND plugin_libs whi_nav2_concatenate_paths_with_arc_action_bt_node)
 
-add_library(whi_nav2_trigger_bt_node SHARED src/action/trigger_bt.cpp)
-list(APPEND plugin_libs whi_nav2_trigger_bt_node)
+add_library(whi_nav2_trigger_action_bt_node SHARED src/action/trigger_action.cpp)
+list(APPEND plugin_libs whi_nav2_trigger_action_bt_node)
+
+add_library(whi_nav2_follow_object_action_bt_node SHARED src/action/follow_object_action.cpp)
+list(APPEND plugin_libs whi_nav2_follow_object_action_bt_node)
+
+add_library(whi_nav2_cancel_follow_object_action_bt_node SHARED src/action/follow_object_cancel_action.cpp)
+list(APPEND plugin_libs whi_nav2_cancel_follow_object_action_bt_node)
+
+# condition
+add_library(whi_nav2_is_robot_idle_condition_bt_node SHARED src/condition/is_robot_idle_condition.cpp)
+list(APPEND plugin_libs whi_nav2_is_robot_idle_condition_bt_node)
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})

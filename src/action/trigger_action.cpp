@@ -12,7 +12,7 @@ Apache License Version 2.0, check LICENSE for more information.
 All text above must be included in any redistribution.
 
 ******************************************************************/
-#include "whi_nav2_bt_plugins/action/trigger_bt.hpp"
+#include "whi_nav2_bt_plugins/action/trigger_action.hpp"
 
 namespace whi_nav2_bt_plugins
 {
