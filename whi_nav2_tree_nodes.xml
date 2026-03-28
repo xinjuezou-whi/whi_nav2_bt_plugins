@@ -48,6 +48,10 @@
         <input_port name="device_ids">Array of device ids</input_port>
     </Condition>
 
+    <Condition ID="IsRobotDocking">
+        <input_port name="state_topic">State topic</input_port>
+    </Condition>
+
     <!-- ############################### CONTROL NODES ################################ -->
 
 
