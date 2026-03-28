@@ -20,7 +20,7 @@ namespace whi_nav2_bt_plugins
 		  state_topic_("whi_state"), is_robot_idle_(false)
 	{
 		/// node version and copyright announcement
-		std::cout << "\nWHI is robot idle bt node VERSION 00.01.1" << std::endl;
+		std::cout << "\nWHI is robot idle bt node VERSION 00.01.2" << std::endl;
 		std::cout << "Copyright © 2026-2027 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
 
 		getInput("state_topic", state_topic_);
@@ -70,8 +70,10 @@ namespace whi_nav2_bt_plugins
 				{
 					if (it.key == "state")
 					{
-						if (it.value == "standby" || it.value == "running" ||
-							it.value == "turning_left" || it.value == "turning_right")
+						if (it.value != "operating" && it.value != "estopped" &&
+							it.value != "critical_collision" && it.value != "fault" &&
+							it.value != "pre_staging" && it.value != "docking" &&
+							it.value != "charging")
 						{
 							is_robot_idle_ = true;
 						}
