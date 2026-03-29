@@ -17,7 +17,7 @@ namespace whi_nav2_bt_plugins
 {
 	IsRobotIdleCondition::IsRobotIdleCondition(const std::string &XmlTagName, const BT::NodeConfiguration &Conf)
 		: BT::ConditionNode(XmlTagName, Conf),
-		  state_topic_("whi_state"), is_robot_idle_(false)
+		  state_topic_("whi_state")
 	{
 		/// node version and copyright announcement
 		std::cout << "\nWHI is robot idle bt node VERSION 00.01.2" << std::endl;
@@ -26,11 +26,20 @@ namespace whi_nav2_bt_plugins
 		getInput("state_topic", state_topic_);
 		std::string deviceIds;
 		getInput("device_ids", deviceIds);
-		auto parts = BT::splitString(deviceIds, ';');
-		for (const auto& it : parts)
+		auto idParts = BT::splitString(deviceIds, ';');
+		for (const auto& it : idParts)
 		{
 			device_ids_.emplace_back(it);  // string_view → string
+			idles_map_[device_ids_.back()] = true;  // initialize as idle
 		}
+		std::string services;
+		getInput("state_services", services);
+		auto serviceParts = BT::splitString(services, ';');
+		for (const auto& it : serviceParts)
+		{
+			state_services_.emplace_back(it);  // string_view → string
+		}
+		getInput("battery_state_service", battery_state_service_);
 
 		auto node = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
 		callback_group_ = node->create_callback_group(
@@ -48,16 +57,73 @@ namespace whi_nav2_bt_plugins
 		// 	xxx_topic_, rclcpp::SystemDefaultsQoS(),
 		// 	std::bind(&IsRobotIdleCondition::xxxCallback, this, std::placeholders::_1),
 		// 	subOption);
+
+		// services
+		for (const auto& service : state_services_)
+		{
+			state_clients_.emplace_back(node->create_client<whi_interfaces::srv::WhiSrvBinaryState>(service));
+		}
+
+		// battery state service
+		battery_state_client_ = node->create_client<whi_interfaces::srv::WhiSrvBatteryState>(battery_state_service_);
 	}
 
 	BT::NodeStatus IsRobotIdleCondition::tick()
 	{
 		callback_group_executor_.spin_some();
-		if (is_robot_idle_)
+
+		// message check
+		for (const auto& it : idles_map_)
 		{
-			return BT::NodeStatus::SUCCESS;
+			if (!it.second)
+			{
+				return BT::NodeStatus::FAILURE;
+			}
+
 		}
-		return BT::NodeStatus::FAILURE;
+		// services check
+		for (const auto& client : state_clients_)
+		{
+			auto request = std::make_shared<whi_interfaces::srv::WhiSrvBinaryState::Request>();
+			auto resultFuture = client->async_send_request(request);
+			if (rclcpp::spin_until_future_complete(config().blackboard->get<rclcpp::Node::SharedPtr>("node"), resultFuture) ==
+				rclcpp::FutureReturnCode::SUCCESS)
+			{
+				auto result = resultFuture.get();
+				if (!result->state)
+				{
+					return BT::NodeStatus::FAILURE;
+				}
+			}
+			else
+			{
+				RCLCPP_ERROR(config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
+					"Failed to call service %s", client->get_service_name());
+				return BT::NodeStatus::FAILURE;
+			}
+		}
+		// battery state check
+		if (battery_state_client_)
+		{
+			auto request = std::make_shared<whi_interfaces::srv::WhiSrvBatteryState::Request>();
+			auto resultFuture = battery_state_client_->async_send_request(request);
+			if (rclcpp::spin_until_future_complete(config().blackboard->get<rclcpp::Node::SharedPtr>("node"), resultFuture) ==
+				rclcpp::FutureReturnCode::SUCCESS)
+			{
+				auto result = resultFuture.get();
+				if (!result->result || result->state.state == whi_interfaces::msg::WhiBattery::STA_CHARGING)
+				{
+					return BT::NodeStatus::FAILURE;
+				}	
+			}
+			else
+			{
+				RCLCPP_ERROR(config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
+					"Failed to call service %s", battery_state_service_.c_str());
+				return BT::NodeStatus::FAILURE;
+			}
+		}
+		return BT::NodeStatus::SUCCESS;
 	}
 
 	void IsRobotIdleCondition::stateCallback(whi_interfaces::msg::WhiState::SharedPtr Msg)
@@ -72,22 +138,16 @@ namespace whi_nav2_bt_plugins
 					{
 						if (it.value != "operating" && it.value != "estopped" &&
 							it.value != "critical_collision" && it.value != "fault" &&
-							it.value != "pre_staging" && it.value != "docking" &&
 							it.value != "charging")
 						{
-							is_robot_idle_ = true;
+							idles_map_.at(id) = true;
 						}
 						else
 						{
-							is_robot_idle_ = false;
+							idles_map_.at(id) = false;
 						}
 						break;
 					}
-				}
-
-				if (!is_robot_idle_)
-				{
-					break;
 				}
 			}
 		}

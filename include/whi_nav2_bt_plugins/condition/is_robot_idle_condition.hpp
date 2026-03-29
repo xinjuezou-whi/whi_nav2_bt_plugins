@@ -20,6 +20,8 @@ Changelog:
 #include <mutex>
 
 #include <whi_interfaces/msg/whi_state.hpp>
+#include <whi_interfaces/srv/whi_srv_binary_state.hpp>
+#include <whi_interfaces/srv/whi_srv_battery_state.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 #include <behaviortree_cpp_v3/condition_node.h>
@@ -59,6 +61,8 @@ namespace whi_nav2_bt_plugins
 			return { 
 				BT::InputPort<std::string>("state_topic", std::string("whi_state"), "State topic"),
 				BT::InputPort<std::string>("device_ids", "Array of device ids"),
+				BT::InputPort<std::string>("state_services", "Array of state services"),
+				BT::InputPort<std::string>("battery_state_service", std::string("battery_state"), "Battery state service"),
 			};
 		}
 
@@ -74,7 +78,11 @@ namespace whi_nav2_bt_plugins
 		rclcpp::Subscription<whi_interfaces::msg::WhiState>::SharedPtr state_sub_;
 		std::string state_topic_;
 		std::vector<std::string> device_ids_;
-		bool is_robot_idle_;
+		std::map<std::string, bool> idles_map_;
+		std::vector<std::string> state_services_;
+		std::string battery_state_service_;
+		std::vector<rclcpp::Client<whi_interfaces::srv::WhiSrvBinaryState>::SharedPtr> state_clients_;
+		rclcpp::Client<whi_interfaces::srv::WhiSrvBatteryState>::SharedPtr battery_state_client_{ nullptr };
 	};
 
 } // namespace whi_nav2_bt_plugins
