@@ -20,6 +20,7 @@ Changelog:
 #include <mutex>
 
 #include <whi_interfaces/msg/whi_state.hpp>
+#include <whi_interfaces/srv/whi_srv_battery_state.hpp>
 
 #include <rclcpp/rclcpp.hpp>
 #include <behaviortree_cpp_v3/condition_node.h>
@@ -54,23 +55,14 @@ namespace whi_nav2_bt_plugins
 		 */
 		static BT::PortsList providedPorts()
 		{
-			return { 
-				BT::InputPort<std::string>("state_topic", std::string("whi_state"), "State topic"),
+			return {
+				BT::InputPort<std::string>("state_service", std::string("battery_state"), "State service"),
 			};
 		}
 
 	private:
-		/**
-		 * @brief Callback function for battery topic
-		 * @param msg Shared pointer to sensor_msgs::msg::BatteryState message
-		 */
-		void stateCallback(whi_interfaces::msg::WhiState::SharedPtr Msg);
-
-		rclcpp::CallbackGroup::SharedPtr callback_group_;
-		rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
-		rclcpp::Subscription<whi_interfaces::msg::WhiState>::SharedPtr state_sub_;
-		std::string state_topic_;
-		bool is_robot_docking_;
+		rclcpp::Client<whi_interfaces::srv::WhiSrvBatteryState>::SharedPtr battery_state_client_{ nullptr };
+		std::string state_service_{ "battery_state" };
 	};
 
 } // namespace whi_nav2_bt_plugins

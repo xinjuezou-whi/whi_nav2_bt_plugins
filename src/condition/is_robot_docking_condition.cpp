@@ -17,62 +17,59 @@ namespace whi_nav2_bt_plugins
 {
 	IsRobotDockingCondition::IsRobotDockingCondition(const std::string &XmlTagName, const BT::NodeConfiguration &Conf)
 		: BT::ConditionNode(XmlTagName, Conf),
-		  state_topic_("whi_state"), is_robot_docking_(false)
+		  state_service_("battery_state")
 	{
 		/// node version and copyright announcement
 		std::cout << "\nWHI is robot docking bt node VERSION 00.01.1" << std::endl;
 		std::cout << "Copyright © 2026-2027 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
 
-		getInput("state_topic", state_topic_);
-		std::string deviceIds;
+		getInput("state_service", state_service_);
 
 		auto node = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
-		callback_group_ = node->create_callback_group(
-			rclcpp::CallbackGroupType::MutuallyExclusive, false);
-		callback_group_executor_.add_callback_group(callback_group_, node->get_node_base_interface());
-
-		rclcpp::SubscriptionOptions subOption;
-		subOption.callback_group = callback_group_;
-		state_sub_ = node->create_subscription<whi_interfaces::msg::WhiState>(
-			state_topic_, rclcpp::SystemDefaultsQoS(),
-			std::bind(&IsRobotDockingCondition::stateCallback, this, std::placeholders::_1),
-			subOption);
-		// leave for extending subscriptions
-		// xxx_sub_ = node->create_subscription<sensor_msgs::msg::xxx>(
-		// 	xxx_topic_, rclcpp::SystemDefaultsQoS(),
-		// 	std::bind(&IsRobotDockingCondition::xxxCallback, this, std::placeholders::_1),
-		// 	subOption);
+		battery_state_client_ = node->create_client<whi_interfaces::srv::WhiSrvBatteryState>(state_service_);
 	}
 
 	BT::NodeStatus IsRobotDockingCondition::tick()
 	{
-		callback_group_executor_.spin_some();
-		if (is_robot_docking_)
+		if (battery_state_client_)
 		{
-			return BT::NodeStatus::SUCCESS;
-		}
-		return BT::NodeStatus::FAILURE;
-	}
-
-	void IsRobotDockingCondition::stateCallback(whi_interfaces::msg::WhiState::SharedPtr Msg)
-	{
-		for (const auto& it : Msg->values)
-		{
-			if (it.key == "state")
+			auto request = std::make_shared<whi_interfaces::srv::WhiSrvBatteryState::Request>();
+			auto resultFuture = battery_state_client_->async_send_request(request);
+			if (rclcpp::spin_until_future_complete(config().blackboard->get<rclcpp::Node::SharedPtr>("node"), resultFuture) ==
+				rclcpp::FutureReturnCode::SUCCESS)
 			{
-				if (it.value == "docking")
+				auto result = resultFuture.get();
+				if (result->result)
 				{
-					is_robot_docking_ = true;
+					if (result->state.state == whi_interfaces::msg::WhiBattery::STA_PRE_STAGING ||
+						result->state.state == whi_interfaces::msg::WhiBattery::STA_DOCKING)
+					{
+						return BT::NodeStatus::SUCCESS;
+					}
+					else
+					{
+						return BT::NodeStatus::FAILURE;
+					}
 				}
 				else
 				{
-					is_robot_docking_ = false;
+					return BT::NodeStatus::FAILURE;
 				}
-				break;
+			}
+			else
+			{
+				RCLCPP_ERROR(config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
+					"Failed to call service %s", state_service_.c_str());
+				return BT::NodeStatus::FAILURE;
 			}
 		}
+		else
+		{
+			RCLCPP_ERROR(config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
+				"Service client for %s is not initialized", state_service_.c_str());
+			return BT::NodeStatus::FAILURE;
+		}
 	}
-
 } // namespace whi_nav2_bt_plugins
 
 #include "behaviortree_cpp_v3/bt_factory.h"
