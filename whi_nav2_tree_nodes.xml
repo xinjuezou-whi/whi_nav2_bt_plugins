@@ -46,10 +46,16 @@
     <Condition ID="IsRobotIdle">
         <input_port name="state_topic">State topic</input_port>
         <input_port name="device_ids">Array of device ids</input_port>
+        <input_port name="state_services">Array of state services</input_port>
+        <input_port name="battery_state_service">Battery state service</input_port>
     </Condition>
 
     <Condition ID="IsRobotDocking">
-        <input_port name="state_topic">State topic</input_port>
+        <input_port name="state_service">State service</input_port>
+    </Condition>
+
+    <Condition ID="IsChargingEnough">
+        <input_port name="state_service">State service</input_port>
     </Condition>
 
     <!-- ############################### CONTROL NODES ################################ -->
