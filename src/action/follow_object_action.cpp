@@ -25,6 +25,9 @@ namespace whi_nav2_bt_plugins
 		const BT::NodeConfiguration &conf)
 		: BtActionNode<Action>(xml_tag_name, action_name, conf)
 	{
+		/// node version and copyright announcement
+		std::cout << "\nWHI follow object bt node VERSION 00.01.1" << std::endl;
+		std::cout << "Copyright © 2026-2027 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
 	}
 
 	void FollowObjectAction::on_tick()

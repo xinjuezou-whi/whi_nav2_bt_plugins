@@ -26,6 +26,9 @@ namespace whi_nav2_bt_plugins
 		: nav2_behavior_tree::BtCancelActionNode<whi_interfaces::action::FollowObject>(
 			  xml_tag_name, action_name, conf)
 	{
+		/// node version and copyright announcement
+		std::cout << "\nWHI cancel follow object bt node VERSION 00.01.1" << std::endl;
+		std::cout << "Copyright © 2026-2027 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
 	}
 
 } // namespace whi_nav2_bt_plugins
