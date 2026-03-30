@@ -26,14 +26,7 @@ namespace whi_nav2_bt_plugins
     class Trigger : public BT::SyncActionNode
     {
     public:
-        Trigger(const std::string& XmlTagName, const BT::NodeConfiguration& Config)
-            : BT::SyncActionNode(XmlTagName, Config)
-            , node_(rclcpp::Node::make_shared("trigger_bt"))
-        {
-            /// node version and copyright announcement
-            std::cout << "\nWHI trigger bt node VERSION 00.01.1" << std::endl;
-            std::cout << "Copyright © 2026-2027 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
-        }
+        Trigger(const std::string& XmlTagName, const BT::NodeConfiguration& Config);
 
         static BT::PortsList providedPorts()
         {
