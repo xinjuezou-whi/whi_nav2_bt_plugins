@@ -42,6 +42,14 @@
 
     <Action ID="CancelFollowObjectExt"/>
 
+    <Action ID="IoRequest">
+      <input_port name="io_service">Service name of io request</input_port>
+      <input_port name="addr">Address of io port</input_port>
+      <input_port name="operation">Operation of IO, 0 for read, 1 for write</input_port>
+      <input_port name="value">Value to set to IO port</input_port>
+      <output_port name="level">Read value of IO port</output_port>
+    </Action>
+
     <!-- ############################### CONDITION NODES ############################## -->
     <Condition ID="IsRobotIdle">
         <input_port name="state_topic">State topic</input_port>

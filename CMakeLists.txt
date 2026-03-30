@@ -63,6 +63,9 @@ list(APPEND plugin_libs whi_nav2_follow_object_action_bt_node)
 add_library(whi_nav2_cancel_follow_object_action_bt_node SHARED src/action/follow_object_cancel_action.cpp)
 list(APPEND plugin_libs whi_nav2_cancel_follow_object_action_bt_node)
 
+add_library(whi_nav2_io_request_action_bt_node SHARED src/action/io_request_action.cpp)
+list(APPEND plugin_libs whi_nav2_io_request_action_bt_node)
+
 # condition
 add_library(whi_nav2_is_robot_idle_condition_bt_node SHARED src/condition/is_robot_idle_condition.cpp)
 list(APPEND plugin_libs whi_nav2_is_robot_idle_condition_bt_node)
