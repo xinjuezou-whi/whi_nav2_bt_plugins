@@ -5,8 +5,7 @@ Features:
 - read and write io ports
 - xxx
 
-Written by Tanzeel, xxx@yyy.com
-Refactored by Xinjue Zou, xinjue.zou.whi@gmail.com
+Written by Xinjue Zou, xinjue.zou.whi@gmail.com
 
 Apache License Version 2.0, check LICENSE for more information.
 All text above must be included in any redistribution.

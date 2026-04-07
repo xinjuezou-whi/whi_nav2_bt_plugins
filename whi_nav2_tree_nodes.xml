@@ -33,6 +33,11 @@
       <input_port name="trigger_value">Bool value to publish to trigger_topic</input_port>
     </Action>
 
+    <Action ID="SyncTrigger">
+      <input_port name="trigger_service">Service name of sync trigger</input_port>
+      <input_port name="value">Value of trigger</input_port>
+    </Action>
+
     <Action ID="FollowObjectExt">
       <input_port name="pose_topic">Topic to publish the pose of the object to follow</input_port>
       <input_port name="tracked_frame">Target frame to follow (Optional, used if pose_topic is not set)</input_port>

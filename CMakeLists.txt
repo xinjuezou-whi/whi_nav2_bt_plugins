@@ -57,6 +57,9 @@ list(APPEND plugin_libs whi_nav2_concatenate_paths_with_arc_action_bt_node)
 add_library(whi_nav2_trigger_action_bt_node SHARED src/action/trigger_action.cpp)
 list(APPEND plugin_libs whi_nav2_trigger_action_bt_node)
 
+add_library(whi_nav2_sync_trigger_action_bt_node SHARED src/action/sync_trigger_action.cpp)
+list(APPEND plugin_libs whi_nav2_sync_trigger_action_bt_node)
+
 add_library(whi_nav2_follow_object_action_bt_node SHARED src/action/follow_object_action.cpp)
 list(APPEND plugin_libs whi_nav2_follow_object_action_bt_node)
 

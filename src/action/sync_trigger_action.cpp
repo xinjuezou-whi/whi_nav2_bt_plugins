@@ -11,46 +11,38 @@ Apache License Version 2.0, check LICENSE for more information.
 All text above must be included in any redistribution.
 
 ******************************************************************/
-#include "whi_nav2_bt_plugins/action/io_request_action.hpp"
+#include "whi_nav2_bt_plugins/action/sync_trigger_action.hpp"
 
 namespace whi_nav2_bt_plugins
 {
-    IoRequest::IoRequest(const std::string& XmlTagName, const BT::NodeConfiguration& Config)
+    SyncTrigger::SyncTrigger(const std::string& XmlTagName, const BT::NodeConfiguration& Config)
         : BT::SyncActionNode(XmlTagName, Config)
-        , node_(rclcpp::Node::make_shared("io_bt"))
+        , node_(rclcpp::Node::make_shared("sync_trigger_bt"))
     {
         /// node version and copyright announcement
-        std::cout << "\nWHI IO request bt node VERSION 00.01.1" << std::endl;
+        std::cout << "\nWHI Sync Trigger bt node VERSION 00.01.1" << std::endl;
         std::cout << "Copyright © 2026-2027 Wheel Hub Intelligent Co.,Ltd. All rights reserved\n" << std::endl;
 
-        getInput("io_service", io_service_);
-        getInput("addr", addr_);
-        getInput("operation", operation_);
+        getInput("trigger_service", trigger_service_);
         getInput("value", value_);
 
 		auto node = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
-		io_client_ = node->create_client<whi_interfaces::srv::WhiSrvIo>(io_service_);
+		trigger_client_ = node->create_client<std_srvs::srv::SetBool>(trigger_service_);
     }
 
-    BT::NodeStatus IoRequest::tick()
+    BT::NodeStatus SyncTrigger::tick()
     {
-		if (io_client_)
+		if (trigger_client_)
 		{
-			auto request = std::make_shared<whi_interfaces::srv::WhiSrvIo::Request>();
-            request->io.addr = addr_;
-            request->io.operation = operation_;
-            request->io.level = value_;
-			auto resultFuture = io_client_->async_send_request(request);
+			auto request = std::make_shared<std_srvs::srv::SetBool::Request>();
+            request->data = value_;
+			auto resultFuture = trigger_client_->async_send_request(request);
 			if (rclcpp::spin_until_future_complete(config().blackboard->get<rclcpp::Node::SharedPtr>("node"), resultFuture) ==
 				rclcpp::FutureReturnCode::SUCCESS)
 			{
 				auto result = resultFuture.get();
-				if (result->result)
-				{
-                    if (operation_ == 0) // read operation, set output port
-                    {
-                        setOutput("level", result->level);
-                    }
+				if (result->success)
+                {
                     return BT::NodeStatus::SUCCESS;
                 }
                 else
@@ -61,14 +53,14 @@ namespace whi_nav2_bt_plugins
 			else
 			{
 				RCLCPP_ERROR(config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
-					"Failed to call service %s", io_service_.c_str());
+					"Failed to call service %s", trigger_service_.c_str());
 				return BT::NodeStatus::FAILURE;
 			}
 		}
 		else
 		{
 			RCLCPP_ERROR(config().blackboard->get<rclcpp::Node::SharedPtr>("node")->get_logger(),
-				"Service client for %s is not initialized", io_service_.c_str());
+				"Service client for %s is not initialized", trigger_service_.c_str());
 			return BT::NodeStatus::FAILURE;
 		}
     }
@@ -78,5 +70,5 @@ namespace whi_nav2_bt_plugins
 #include "behaviortree_cpp_v3/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
-    factory.registerNodeType<whi_nav2_bt_plugins::IoRequest>("IoRequest");
+    factory.registerNodeType<whi_nav2_bt_plugins::SyncTrigger>("SyncTrigger");
 }
