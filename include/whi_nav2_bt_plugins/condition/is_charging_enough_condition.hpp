@@ -23,7 +23,7 @@ Changelog:
 #include <whi_interfaces/srv/whi_srv_battery_state.hpp>
 
 #include <rclcpp/rclcpp.hpp>
-#include <behaviortree_cpp_v3/condition_node.h>
+#include <behaviortree_cpp/condition_node.h>
 
 namespace whi_nav2_bt_plugins
 {

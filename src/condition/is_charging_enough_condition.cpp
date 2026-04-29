@@ -71,7 +71,7 @@ namespace whi_nav2_bt_plugins
 	}
 } // namespace whi_nav2_bt_plugins
 
-#include "behaviortree_cpp_v3/bt_factory.h"
+#include "behaviortree_cpp/bt_factory.h"
 BT_REGISTER_NODES(factory)
 {
 	factory.registerNodeType<whi_nav2_bt_plugins::IsChargingEnoughCondition>("IsChargingEnough");
